@@ -174,7 +174,8 @@ public class frmClientes extends javax.swing.JDialog {
         // Añadiré un nuevo elemento a la lista y lo selecionaré.
         // Habrá que introducir los datos que faltan y pulsar sobre el botón guardar.
         // Incluiré un flag de "nuevo cliente" para hacer un insert en la base de datos en lugar de un update.
-        
+        frmAddCliente nuevocli = new frmAddCliente(this,true);
+        nuevocli.setVisible(true);
     }//GEN-LAST:event_btnNuevoClienteActionPerformed
 
     private void txtApellidosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtApellidosActionPerformed
