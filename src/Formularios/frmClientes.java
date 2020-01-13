@@ -12,12 +12,13 @@ import java.awt.Toolkit;
  *
  * @author nacho
  */
-public class frmClientes extends javax.swing.JFrame {
+public class frmClientes extends javax.swing.JDialog {
 
     /**
-     * Creates new form fmrClientes
+     * Creates new form frmClientesModal
      */
-    public frmClientes() {
+    public frmClientes(java.awt.Frame parent, boolean modal) {
+        super(parent, modal);
         initComponents();
     }
 
@@ -30,34 +31,45 @@ public class frmClientes extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        comboClientes = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
+        comboClientes = new javax.swing.JComboBox<>();
+        btnNuevoCliente = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
         txtNombre = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
         txtApellidos = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtDireccion = new javax.swing.JTextArea();
-        txtTelefono = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
+        txtTelefono = new javax.swing.JTextField();
         btnGuardar = new javax.swing.JButton();
-        btnCancelar = new javax.swing.JButton();
         btnEliminar = new javax.swing.JButton();
+        btnCancelar = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Gestión de clientes");
-        setIconImage(getIconoFormulario());
-        setName("frmClientes"); // NOI18N
-        setResizable(false);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setName("Clientes"); // NOI18N
 
-        comboClientes.setName("ComboClientes"); // NOI18N
-
-        jLabel1.setLabelFor(comboClientes);
         jLabel1.setText("Cliente");
         jLabel1.setName("labelCliente"); // NOI18N
 
+        comboClientes.setName("ComboClientes"); // NOI18N
+
+        btnNuevoCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/nuevocliente.png"))); // NOI18N
+        btnNuevoCliente.setName("btnNuevoCliente"); // NOI18N
+        btnNuevoCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNuevoClienteActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Nombre");
+        jLabel2.setName("labelNombre"); // NOI18N
+
         txtNombre.setName("txtNombre"); // NOI18N
+
+        jLabel3.setText("Apellidos");
+        jLabel3.setName("labelApellidos"); // NOI18N
 
         txtApellidos.setName("txtApellidos"); // NOI18N
         txtApellidos.addActionListener(new java.awt.event.ActionListener() {
@@ -66,36 +78,26 @@ public class frmClientes extends javax.swing.JFrame {
             }
         });
 
+        jLabel4.setText("Dirección");
+        jLabel4.setName("labelDireccion"); // NOI18N
+
         txtDireccion.setColumns(20);
         txtDireccion.setRows(5);
         txtDireccion.setName("txtDireccion"); // NOI18N
         jScrollPane1.setViewportView(txtDireccion);
 
-        txtTelefono.setName("txtTelefono"); // NOI18N
-
-        jLabel2.setLabelFor(txtNombre);
-        jLabel2.setText("Nombre");
-        jLabel2.setName("labelNombre"); // NOI18N
-
-        jLabel3.setLabelFor(txtApellidos);
-        jLabel3.setText("Apellidos");
-        jLabel3.setName("labelApellidos"); // NOI18N
-
-        jLabel4.setLabelFor(txtDireccion);
-        jLabel4.setText("Dirección");
-        jLabel4.setName("labelDireccion"); // NOI18N
-
-        jLabel5.setLabelFor(txtTelefono);
         jLabel5.setText("Teléfono");
         jLabel5.setName("labelTelefono"); // NOI18N
 
-        btnGuardar.setText("Guardar");
+        txtTelefono.setName("txtTelefono"); // NOI18N
 
-        btnCancelar.setText("Cancelar");
+        btnGuardar.setText("Guardar");
 
         btnEliminar.setText("Eliminar");
         btnEliminar.setToolTipText("");
         btnEliminar.setName("btnEliminar"); // NOI18N
+
+        btnCancelar.setText("Cancelar");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -104,16 +106,10 @@ public class frmClientes extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(comboClientes, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtNombre)
                     .addComponent(txtApellidos)
-                    .addComponent(jScrollPane1)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnEliminar, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 587, Short.MAX_VALUE)
+                    .addComponent(txtTelefono)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -122,8 +118,20 @@ public class frmClientes extends javax.swing.JFrame {
                             .addComponent(jLabel4)
                             .addComponent(jLabel5))
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(txtTelefono))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(comboClientes, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnNuevoCliente)
+                        .addGap(9, 9, 9)))
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(123, 123, 123))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -131,8 +139,10 @@ public class frmClientes extends javax.swing.JFrame {
                 .addGap(41, 41, 41)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(comboClientes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnNuevoCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(comboClientes))
+                .addGap(12, 12, 12)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -149,15 +159,23 @@ public class frmClientes extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnNuevoClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoClienteActionPerformed
+        // Añadiré un nuevo elemento a la lista y lo selecionaré.
+        // Habrá que introducir los datos que faltan y pulsar sobre el botón guardar.
+        // Incluiré un flag de "nuevo cliente" para hacer un insert en la base de datos en lugar de un update.
+        
+    }//GEN-LAST:event_btnNuevoClienteActionPerformed
 
     private void txtApellidosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtApellidosActionPerformed
         // TODO add your handling code here:
@@ -191,15 +209,22 @@ public class frmClientes extends javax.swing.JFrame {
         //</editor-fold>
         //</editor-fold>
 
-        /* Create and display the form */
+        /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new frmClientes().setVisible(true);
+                frmClientes dialog = new frmClientes(new javax.swing.JFrame(), true);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
+                    }
+                });
+                dialog.setVisible(true);
             }
         });
     }
     public Image getIconoFormulario(){
-     Image retValue = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("recursos/GestionClientes.png"));
+     Image retValue = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("recursos/nuevocliente.png"));
      return retValue;
     }
 
@@ -207,6 +232,7 @@ public class frmClientes extends javax.swing.JFrame {
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnGuardar;
+    private javax.swing.JButton btnNuevoCliente;
     private javax.swing.JComboBox<String> comboClientes;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
