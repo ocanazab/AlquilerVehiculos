@@ -10,12 +10,22 @@ import java.awt.Toolkit;
 import javax.swing.JOptionPane;
 import gestion.Clientes;
 
+//Imports para Hibernate
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import conexiones.HibernateUtil;
+import org.hibernate.exception.ConstraintViolationException;
+
 /**
  *
- * @author nacho
- */
-public class frmClientes extends javax.swing.JDialog {
+ * @author nacho */
 
+
+public class frmClientes extends javax.swing.JDialog {   
+    
+    //Variable pública para recibir datos del cuadro de dialogo de AddCliente.
+    public static String Intercambio="";
     
     /**
      * Creates new form frmClientesModal
@@ -96,6 +106,11 @@ public class frmClientes extends javax.swing.JDialog {
         txtTelefono.setName("txtTelefono"); // NOI18N
 
         btnGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/guardar.png"))); // NOI18N
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarActionPerformed(evt);
+            }
+        });
 
         btnEliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/borrar.png"))); // NOI18N
         btnEliminar.setToolTipText("");
@@ -179,7 +194,8 @@ public class frmClientes extends javax.swing.JDialog {
         // Habrá que introducir los datos que faltan y pulsar sobre el botón guardar.
         // Incluiré un flag de "nuevo cliente" para hacer un insert en la base de datos en lugar de un update.
         frmAddCliente frmnuevocli = new frmAddCliente(this,true);
-        frmnuevocli.setVisible(true);        
+        frmnuevocli.setVisible(true);
+        comboClientes.addItem(Intercambio);
     }//GEN-LAST:event_btnNuevoClienteActionPerformed
 
     private void txtApellidosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtApellidosActionPerformed
@@ -190,6 +206,40 @@ public class frmClientes extends javax.swing.JDialog {
         // Cierro el formulario
         dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        // Inicializo Hibernate
+        SessionFactory sesion=HibernateUtil.getSessionFactory();
+        Session session = sesion.openSession();
+        
+        //Inicializo la transaccion
+        Transaction tx = session.beginTransaction();
+        
+        //Guardo el cliente en la tabla clientes
+        //El id_cliente será su dni sin la letra
+        
+        int idcliente = Integer.parseInt(Intercambio.substring(0, 8));
+        
+        Clientes nuevocliente = new Clientes();        
+        
+        nuevocliente.setIdCliente(idcliente);
+        nuevocliente.setDni(Intercambio);
+        nuevocliente.setNombre(txtNombre.getText());
+        nuevocliente.setApellidos(txtApellidos.getText());
+        nuevocliente.setDireccion(txtDireccion.getText());
+        nuevocliente.setTelefono(txtTelefono.getText());
+        
+        //Guardo los datos
+        session.save(nuevocliente);
+        
+        //Confirmo los cambios
+        
+        try{
+            tx.commit();
+            session.close();
+            JOptionPane.showMessageDialog(null, "Cliente guardado satisfactoriamente", "Operación correcta", JOptionPane.INFORMATION_MESSAGE);            
+        }catch(ConstraintViolationException e){}
+    }//GEN-LAST:event_btnGuardarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -222,7 +272,7 @@ public class frmClientes extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                frmClientes dialog = new frmClientes(new javax.swing.JFrame(), true);
+                frmClientes dialog = new frmClientes(new javax.swing.JFrame(), true);                
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
