@@ -5,6 +5,7 @@
  */
 package Formularios;
 
+import conexiones.HibernateUtil;
 import java.awt.Image;
 import java.awt.Toolkit;
 import javax.swing.JOptionPane;
@@ -16,6 +17,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import conexiones.HibernateUtil;
 import org.hibernate.exception.ConstraintViolationException;
+
+
 
 /**
  *
@@ -235,10 +238,12 @@ public class frmClientes extends javax.swing.JDialog {
         //Confirmo los cambios
         
         try{
-            tx.commit();
-            session.close();
+            tx.commit();            
             JOptionPane.showMessageDialog(null, "Cliente guardado satisfactoriamente", "Operación correcta", JOptionPane.INFORMATION_MESSAGE);            
         }catch(ConstraintViolationException e){}
+        
+        //Cierro la sesion
+        session.close();
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     /**
