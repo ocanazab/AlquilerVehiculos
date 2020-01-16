@@ -240,26 +240,31 @@ public class frmClientes extends javax.swing.JDialog {
         //El id_cliente será su dni sin la letra        
         int idcliente = Integer.parseInt(comboClientes.getSelectedItem().toString().substring(0, 8));
         
-        Clientes cliente = new Clientes();        
+        
         
         if (nuevoCliente){
-            cliente.setIdCliente(idcliente);
-            cliente.setDni(comboClientes.getSelectedItem().toString());
-            cliente.setNombre(txtNombre.getText());
-            cliente.setApellidos(txtApellidos.getText());
-            cliente.setDireccion(txtDireccion.getText());
-            cliente.setTelefono(txtTelefono.getText());
+            Clientes clinew = new Clientes();        
+            
+            clinew.setIdCliente(idcliente);
+            clinew.setDni(comboClientes.getSelectedItem().toString());
+            clinew.setNombre(txtNombre.getText());
+            clinew.setApellidos(txtApellidos.getText());
+            clinew.setDireccion(txtDireccion.getText());
+            clinew.setTelefono(txtTelefono.getText());
         
             //Guardo los datos
-            session.save(cliente);
+            session.save(clinew);
         }else{
-            //Actualizo los datos            
-            cliente.setNombre(txtNombre.getText());
-            cliente.setApellidos(txtApellidos.getText());
-            cliente.setDireccion(txtDireccion.getText());
-            cliente.setTelefono(txtTelefono.getText());
+            //Actualizo los datos
+            Clientes cliupdate = (Clientes) session.get(Clientes.class, idcliente);
             
-            session.update(cliente);
+            cliupdate.setDni(comboClientes.getSelectedItem().toString());            
+            cliupdate.setNombre(txtNombre.getText());
+            cliupdate.setApellidos(txtApellidos.getText());
+            cliupdate.setDireccion(txtDireccion.getText());
+            cliupdate.setTelefono(txtTelefono.getText());
+            
+            session.update(cliupdate);
         }
         
         //Confirmo los cambios
@@ -271,7 +276,7 @@ public class frmClientes extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(null, "Cliente guardado satisfactoriamente", "Operación correcta", JOptionPane.INFORMATION_MESSAGE);
             nuevoCliente=false;
         }catch(Exception e){
-                JOptionPane.showMessageDialog(null, e.getMessage(), "Operación correcta", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, e.getMessage(), "Error en la operación", JOptionPane.ERROR_MESSAGE);
             }        
             
     }//GEN-LAST:event_btnGuardarActionPerformed
