@@ -12,12 +12,12 @@ import java.awt.Toolkit;
  *
  * @author Jose Ignacio Bazan
  */
-public class principal extends javax.swing.JFrame {
+public class frmPrincipal extends javax.swing.JFrame {
 
     /**
      * Creates new form principal
      */
-    public principal() {
+    public frmPrincipal() {
         initComponents();
     }
 
@@ -54,6 +54,11 @@ public class principal extends javax.swing.JFrame {
         btnGestionClientes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/GestionClientes.png"))); // NOI18N
         btnGestionClientes.setToolTipText("Gestión de Clientes");
         btnGestionClientes.setActionCommand("btnGestionClientes");
+        btnGestionClientes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGestionClientesActionPerformed(evt);
+            }
+        });
 
         btnGestionReservas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/GestionReservas.png"))); // NOI18N
         btnGestionReservas.setToolTipText("Gestión de reservas");
@@ -66,6 +71,11 @@ public class principal extends javax.swing.JFrame {
         btnSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/salir.png"))); // NOI18N
         btnSalir.setToolTipText("Salir");
         btnSalir.setActionCommand("btnSalir");
+        btnSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalirActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -109,11 +119,27 @@ public class principal extends javax.swing.JFrame {
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btnGestionClientes, btnGestionCoches, btnGestionReservas, btnSalir});
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnGestionCochesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGestionCochesActionPerformed
-        // TODO add your handling code here:
+        // Muestro el formulario de coches
+        frmCoches ventanaCoches =  new frmCoches(this,true);
+        ventanaCoches.setVisible(true);
+        ventanaCoches.setTitle("Gestión de coches");
     }//GEN-LAST:event_btnGestionCochesActionPerformed
+
+    private void btnGestionClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGestionClientesActionPerformed
+        // Muestro el formulario de clientes
+        frmClientes ventanaClientes = new frmClientes(this,true);
+        ventanaClientes.setVisible(true);
+        ventanaClientes.setTitle("Gestión de clientes");
+    }//GEN-LAST:event_btnGestionClientesActionPerformed
+
+    private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
+        // Se sale de la aplicacion        
+        System.exit(0);
+    }//GEN-LAST:event_btnSalirActionPerformed
 
     /**
      * @param args the command line arguments
@@ -132,20 +158,21 @@ public class principal extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(frmPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(frmPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(frmPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(frmPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new principal().setVisible(true);
+                new frmPrincipal().setVisible(true);
             }
         });
     }

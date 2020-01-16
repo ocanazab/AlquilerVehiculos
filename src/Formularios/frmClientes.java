@@ -5,17 +5,26 @@
  */
 package Formularios;
 
-import conexiones.HibernateUtil;
 import java.awt.Image;
 import java.awt.Toolkit;
 import javax.swing.JOptionPane;
 import gestion.Clientes;
+import java.util.Iterator;
+import java.util.List;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
 
 //Imports para Hibernate
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.Query;
 import conexiones.HibernateUtil;
+import org.hibernate.ObjectNotFoundException;
 import org.hibernate.exception.ConstraintViolationException;
 
 
@@ -36,6 +45,7 @@ public class frmClientes extends javax.swing.JDialog {
     public frmClientes(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        cargaDatosCombo();        
     }
 
     /**
@@ -71,6 +81,11 @@ public class frmClientes extends javax.swing.JDialog {
         jLabel1.setName("labelCliente"); // NOI18N
 
         comboClientes.setName("ComboClientes"); // NOI18N
+        comboClientes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboClientesActionPerformed(evt);
+            }
+        });
 
         btnNuevoCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/nuevocliente.png"))); // NOI18N
         btnNuevoCliente.setName("btnNuevoCliente"); // NOI18N
@@ -219,8 +234,8 @@ public class frmClientes extends javax.swing.JDialog {
         Transaction tx = session.beginTransaction();
         
         //Guardo el cliente en la tabla clientes
-        //El id_cliente será su dni sin la letra
         
+        //El id_cliente será su dni sin la letra
         int idcliente = Integer.parseInt(Intercambio.substring(0, 8));
         
         Clientes nuevocliente = new Clientes();        
@@ -239,12 +254,19 @@ public class frmClientes extends javax.swing.JDialog {
         
         try{
             tx.commit();            
+            //Cierro la sesion        
+            session.close();
             JOptionPane.showMessageDialog(null, "Cliente guardado satisfactoriamente", "Operación correcta", JOptionPane.INFORMATION_MESSAGE);            
-        }catch(ConstraintViolationException e){}
+        }catch(ConstraintViolationException e){}        
         
-        //Cierro la sesion
-        session.close();
     }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void comboClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboClientesActionPerformed
+        // Al hacer click sobre un elemento, recuperar de la base de datos la información del cliente.
+        comboClientes.addActionListener(new ActionListener(){
+                        @Override public void actionPerformed(ActionEvent e) {cargaDatosCliente();}
+        });    
+    }//GEN-LAST:event_comboClientesActionPerformed
 
     /**
      * @param args the command line arguments
@@ -286,8 +308,46 @@ public class frmClientes extends javax.swing.JDialog {
                 });
                 dialog.setVisible(true);
             }
-        });
+        });        
     }
+    
+    private void cargaDatosCombo(){
+        //Obtengo los clientes de la base de datos y relleno el combo.
+        SessionFactory sesion = HibernateUtil.getSessionFactory();
+        Session conexion = sesion.openSession();
+        
+        Query consulta = conexion.createQuery("from Clientes");
+        List<Clientes> listaclientes = consulta.list();
+        
+        Iterator<Clientes> iterador = listaclientes.iterator();
+        
+        while (iterador.hasNext()){
+            Clientes cliente = (Clientes) iterador.next();
+            comboClientes.addItem(cliente.getDni());
+        }
+        conexion.close();
+    }
+    
+    private void cargaDatosCliente(){
+        //Obtengo información del cliente a través de su DNI
+        SessionFactory sesion=HibernateUtil.getSessionFactory();
+        Session conexion= sesion.openSession();
+        
+        Clientes cli= new Clientes();
+        
+        try{
+            cli=(Clientes) conexion.load(Clientes.class,comboClientes.getSelectedItem().toString());
+            txtNombre.setText(cli.getNombre());
+            txtApellidos.setText(cli.getApellidos());
+            txtDireccion.setText(cli.getDireccion());
+            txtTelefono.setText(cli.getTelefono());
+            
+        }catch(ObjectNotFoundException e){
+            JOptionPane.showMessageDialog(null, "No existe el cliente", "Registro no encontrado", JOptionPane.ERROR_MESSAGE);            
+        }
+        conexion.close();
+    }
+    
     public Image getIconoFormulario(){
      Image retValue = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("recursos/nuevocliente.png"));
      return retValue;

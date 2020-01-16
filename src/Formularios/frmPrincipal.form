@@ -12,7 +12,7 @@
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
-    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="true"/>
   </SyntheticProperties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -93,6 +93,9 @@
         <Property name="toolTipText" type="java.lang.String" value="Gesti&#xf3;n de Clientes"/>
         <Property name="actionCommand" type="java.lang.String" value="btnGestionClientes"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnGestionClientesActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btnGestionReservas">
       <Properties>
@@ -120,6 +123,9 @@
         <Property name="toolTipText" type="java.lang.String" value="Salir"/>
         <Property name="actionCommand" type="java.lang.String" value="btnSalir"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSalirActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>
