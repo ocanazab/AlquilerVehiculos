@@ -38,6 +38,7 @@ public class frmClientes extends javax.swing.JDialog {
     
     //Variable pública para recibir datos del cuadro de dialogo de AddCliente.
     public static String Intercambio="";
+    public static Boolean nuevoCliente=false;
     
     /**
      * Creates new form frmClientesModal
@@ -214,6 +215,7 @@ public class frmClientes extends javax.swing.JDialog {
         frmAddCliente frmnuevocli = new frmAddCliente(this,true);
         frmnuevocli.setVisible(true);
         comboClientes.addItem(Intercambio);
+        nuevoCliente=true;
     }//GEN-LAST:event_btnNuevoClienteActionPerformed
 
     private void txtApellidosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtApellidosActionPerformed
@@ -235,22 +237,30 @@ public class frmClientes extends javax.swing.JDialog {
         
         //Guardo el cliente en la tabla clientes
         
-        //El id_cliente será su dni sin la letra
-        //int idcliente = Integer.parseInt(Intercambio.substring(0, 8));
+        //El id_cliente será su dni sin la letra        
         int idcliente = Integer.parseInt(comboClientes.getSelectedItem().toString().substring(0, 8));
         
-        Clientes nuevocliente = new Clientes();        
+        Clientes cliente = new Clientes();        
         
-        nuevocliente.setIdCliente(idcliente);
-        //nuevocliente.setDni(Intercambio);
-        nuevocliente.setDni(comboClientes.getSelectedItem().toString());
-        nuevocliente.setNombre(txtNombre.getText());
-        nuevocliente.setApellidos(txtApellidos.getText());
-        nuevocliente.setDireccion(txtDireccion.getText());
-        nuevocliente.setTelefono(txtTelefono.getText());
+        if (nuevoCliente){
+            cliente.setIdCliente(idcliente);
+            cliente.setDni(comboClientes.getSelectedItem().toString());
+            cliente.setNombre(txtNombre.getText());
+            cliente.setApellidos(txtApellidos.getText());
+            cliente.setDireccion(txtDireccion.getText());
+            cliente.setTelefono(txtTelefono.getText());
         
-        //Guardo los datos
-        session.save(nuevocliente);
+            //Guardo los datos
+            session.save(cliente);
+        }else{
+            //Actualizo los datos            
+            cliente.setNombre(txtNombre.getText());
+            cliente.setApellidos(txtApellidos.getText());
+            cliente.setDireccion(txtDireccion.getText());
+            cliente.setTelefono(txtTelefono.getText());
+            
+            session.update(cliente);
+        }
         
         //Confirmo los cambios
         
@@ -258,9 +268,12 @@ public class frmClientes extends javax.swing.JDialog {
             tx.commit();            
             //Cierro la sesion        
             session.close();
-            JOptionPane.showMessageDialog(null, "Cliente guardado satisfactoriamente", "Operación correcta", JOptionPane.INFORMATION_MESSAGE);            
-        }catch(ConstraintViolationException e){}        
-        
+            JOptionPane.showMessageDialog(null, "Cliente guardado satisfactoriamente", "Operación correcta", JOptionPane.INFORMATION_MESSAGE);
+            nuevoCliente=false;
+        }catch(Exception e){
+                JOptionPane.showMessageDialog(null, e.getMessage(), "Operación correcta", JOptionPane.ERROR_MESSAGE);
+            }        
+            
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void comboClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboClientesActionPerformed
@@ -349,6 +362,7 @@ public class frmClientes extends javax.swing.JDialog {
         
         try{
             cli=(Clientes) conexion.load(Clientes.class,cod_cliente);
+            
             txtNombre.setText(cli.getNombre());
             txtApellidos.setText(cli.getApellidos());
             txtDireccion.setText(cli.getDireccion());
@@ -356,6 +370,8 @@ public class frmClientes extends javax.swing.JDialog {
             
         }catch(ObjectNotFoundException e){
             JOptionPane.showMessageDialog(null, "No existe el cliente", "Registro no encontrado", JOptionPane.ERROR_MESSAGE);            
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error en la operación", JOptionPane.ERROR_MESSAGE);            
         }
         conexion.close();
     }
