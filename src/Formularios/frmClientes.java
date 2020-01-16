@@ -220,7 +220,11 @@ public class frmClientes extends javax.swing.JDialog {
         // Incluiré un flag de "nuevo cliente" para hacer un insert en la base de datos en lugar de un update.
         frmAddCliente frmnuevocli = new frmAddCliente(this,true);
         frmnuevocli.setVisible(true);
+        
+        //Añado el dni del cliente introducido en el formulario anterior.
         comboClientes.addItem(Intercambio);
+        
+        //Marco el cliente como nuevo.
         nuevoCliente=true;
     }//GEN-LAST:event_btnNuevoClienteActionPerformed
 
@@ -293,10 +297,11 @@ public class frmClientes extends javax.swing.JDialog {
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void comboClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboClientesActionPerformed
-        // Al hacer click sobre un elemento, recuperar de la base de datos la información del cliente.
+        // Al hacer click sobre un elemento, recuperar de la base de datos la información del cliente.        
         comboClientes.addActionListener(new ActionListener(){
-                        @Override public void actionPerformed(ActionEvent e) {cargaDatosCliente();}
+                      @Override public void actionPerformed(ActionEvent e) {cargaDatosCliente();}
         });    
+        
     }//GEN-LAST:event_comboClientesActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
@@ -313,7 +318,7 @@ public class frmClientes extends javax.swing.JDialog {
         
         Clientes clienteborrar = (Clientes) conexion.load(Clientes.class,idcliente);          
         
-        confirmacion=JOptionPane.showConfirmDialog(null, "¿Quieres borrar el cliente seleccionado?", "Advertencia", JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
+        confirmacion=JOptionPane.showConfirmDialog(null, "¿Quieres borrar el cliente seleccionado?", "Advertencia", JOptionPane.OK_CANCEL_OPTION);
         
         //Confirmacion puede ser 0=SI, 1=CANCEL
         if (confirmacion==0){
@@ -392,10 +397,8 @@ public class frmClientes extends javax.swing.JDialog {
             Clientes cliente = (Clientes) iterador.next();
             comboClientes.addItem(cliente.getDni());
         }
-        //Añado un registro más y lo selecciono
-        //comboClientes.addItem("Selecciona un cliente.");
-        //numClientes=comboClientes.getItemCount();
-        //comboClientes.setSelectedIndex(numClientes-1);
+            
+        comboClientes.setSelectedIndex(0);
         
         conexion.close();
     }
@@ -403,28 +406,30 @@ public class frmClientes extends javax.swing.JDialog {
     private void cargaDatosCliente(){
         //Obtengo información del cliente a través de su DNI
         
-        SessionFactory sesion=HibernateUtil.getSessionFactory();
-        Session conexion= sesion.openSession();
+        if(nuevoCliente==false){
+            SessionFactory sesion=HibernateUtil.getSessionFactory();
+            Session conexion= sesion.openSession();
         
-        Clientes cli= new Clientes();
-        int cod_cliente=0;
+            Clientes cli= new Clientes();
+            int cod_cliente=0;
         
-        cod_cliente=Integer.parseInt(comboClientes.getSelectedItem().toString().substring(0, 8));        
+            cod_cliente=Integer.parseInt(comboClientes.getSelectedItem().toString().substring(0, 8));        
         
-        try{
-            cli=(Clientes) conexion.load(Clientes.class,cod_cliente);
+            try{
+                cli=(Clientes) conexion.load(Clientes.class,cod_cliente);
             
-            txtNombre.setText(cli.getNombre());
-            txtApellidos.setText(cli.getApellidos());
-            txtDireccion.setText(cli.getDireccion());
-            txtTelefono.setText(cli.getTelefono());
-            
-        }catch(ObjectNotFoundException e){
-            JOptionPane.showMessageDialog(null, "No existe el cliente", "Registro no encontrado", JOptionPane.ERROR_MESSAGE);            
-        }catch(Exception e){
-            JOptionPane.showMessageDialog(null, e.getMessage(), "Error en la operación", JOptionPane.ERROR_MESSAGE);            
+                txtNombre.setText(cli.getNombre());
+                txtApellidos.setText(cli.getApellidos());
+                txtDireccion.setText(cli.getDireccion());
+                txtTelefono.setText(cli.getTelefono());            
+            }catch(ObjectNotFoundException e){
+                JOptionPane.showMessageDialog(null, "No existe el cliente", "Registro no encontrado", JOptionPane.ERROR_MESSAGE);            
+            }catch(Exception e){
+                JOptionPane.showMessageDialog(null, e.getMessage(), "Error en la operación", JOptionPane.ERROR_MESSAGE);            
+            }
+            conexion.close();
         }
-        conexion.close();
+                
     }
     
     public Image getIconoFormulario(){
