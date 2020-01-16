@@ -236,12 +236,14 @@ public class frmClientes extends javax.swing.JDialog {
         //Guardo el cliente en la tabla clientes
         
         //El id_cliente será su dni sin la letra
-        int idcliente = Integer.parseInt(Intercambio.substring(0, 8));
+        //int idcliente = Integer.parseInt(Intercambio.substring(0, 8));
+        int idcliente = Integer.parseInt(comboClientes.getSelectedItem().toString().substring(0, 8));
         
         Clientes nuevocliente = new Clientes();        
         
         nuevocliente.setIdCliente(idcliente);
-        nuevocliente.setDni(Intercambio);
+        //nuevocliente.setDni(Intercambio);
+        nuevocliente.setDni(comboClientes.getSelectedItem().toString());
         nuevocliente.setNombre(txtNombre.getText());
         nuevocliente.setApellidos(txtApellidos.getText());
         nuevocliente.setDireccion(txtDireccion.getText());
@@ -318,6 +320,7 @@ public class frmClientes extends javax.swing.JDialog {
         
         Query consulta = conexion.createQuery("from Clientes");
         List<Clientes> listaclientes = consulta.list();
+        int numClientes=0;
         
         Iterator<Clientes> iterador = listaclientes.iterator();
         
@@ -325,18 +328,27 @@ public class frmClientes extends javax.swing.JDialog {
             Clientes cliente = (Clientes) iterador.next();
             comboClientes.addItem(cliente.getDni());
         }
+        //Añado un registro más y lo selecciono
+        //comboClientes.addItem("Selecciona un cliente.");
+        //numClientes=comboClientes.getItemCount();
+        //comboClientes.setSelectedIndex(numClientes-1);
+        
         conexion.close();
     }
     
     private void cargaDatosCliente(){
         //Obtengo información del cliente a través de su DNI
+        
         SessionFactory sesion=HibernateUtil.getSessionFactory();
         Session conexion= sesion.openSession();
         
         Clientes cli= new Clientes();
+        int cod_cliente=0;
+        
+        cod_cliente=Integer.parseInt(comboClientes.getSelectedItem().toString().substring(0, 8));        
         
         try{
-            cli=(Clientes) conexion.load(Clientes.class,comboClientes.getSelectedItem().toString());
+            cli=(Clientes) conexion.load(Clientes.class,cod_cliente);
             txtNombre.setText(cli.getNombre());
             txtApellidos.setText(cli.getApellidos());
             txtDireccion.setText(cli.getDireccion());
