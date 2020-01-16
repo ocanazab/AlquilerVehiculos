@@ -25,6 +25,7 @@ import org.hibernate.Transaction;
 import org.hibernate.Query;
 import conexiones.HibernateUtil;
 import org.hibernate.ObjectNotFoundException;
+import org.hibernate.exception.JDBCConnectionException;
 import org.hibernate.exception.ConstraintViolationException;
 
 
@@ -134,6 +135,11 @@ public class frmClientes extends javax.swing.JDialog {
         btnEliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/borrar.png"))); // NOI18N
         btnEliminar.setToolTipText("");
         btnEliminar.setName("btnEliminar"); // NOI18N
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
 
         btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/cancelar.png"))); // NOI18N
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {
@@ -235,7 +241,7 @@ public class frmClientes extends javax.swing.JDialog {
         //Inicializo la transaccion
         Transaction tx = session.beginTransaction();
         
-        //Guardo el cliente en la tabla clientes
+        
         
         //El id_cliente será su dni sin la letra        
         int idcliente = Integer.parseInt(comboClientes.getSelectedItem().toString().substring(0, 8));
@@ -243,6 +249,9 @@ public class frmClientes extends javax.swing.JDialog {
         
         
         if (nuevoCliente){
+            
+            //El Cliente es nuevo, lo doy de alta en la base de datos.
+            
             Clientes clinew = new Clientes();        
             
             clinew.setIdCliente(idcliente);
@@ -255,7 +264,9 @@ public class frmClientes extends javax.swing.JDialog {
             //Guardo los datos
             session.save(clinew);
         }else{
-            //Actualizo los datos
+            
+            //El cliente ya existe, actualizo los datos.
+            
             Clientes cliupdate = (Clientes) session.get(Clientes.class, idcliente);
             
             cliupdate.setDni(comboClientes.getSelectedItem().toString());            
@@ -276,8 +287,8 @@ public class frmClientes extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(null, "Cliente guardado satisfactoriamente", "Operación correcta", JOptionPane.INFORMATION_MESSAGE);
             nuevoCliente=false;
         }catch(Exception e){
-                JOptionPane.showMessageDialog(null, e.getMessage(), "Error en la operación", JOptionPane.ERROR_MESSAGE);
-            }        
+            JOptionPane.showMessageDialog(null, e.getStackTrace(), "Error en la operación", JOptionPane.ERROR_MESSAGE);                
+        }       
             
     }//GEN-LAST:event_btnGuardarActionPerformed
 
@@ -287,6 +298,41 @@ public class frmClientes extends javax.swing.JDialog {
                         @Override public void actionPerformed(ActionEvent e) {cargaDatosCliente();}
         });    
     }//GEN-LAST:event_comboClientesActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        // Borro el registro seleccionado.
+        SessionFactory factoria = HibernateUtil.getSessionFactory();
+        Session conexion = factoria.openSession();
+        
+        Transaction trx = conexion.beginTransaction();
+        
+        //El id_cliente será su dni sin la letra        
+        int idcliente = Integer.parseInt(comboClientes.getSelectedItem().toString().substring(0, 8));
+        String dni=comboClientes.getSelectedItem().toString();
+        int confirmacion;
+        
+        Clientes clienteborrar = (Clientes) conexion.load(Clientes.class,idcliente);          
+        
+        confirmacion=JOptionPane.showConfirmDialog(null, "¿Quieres borrar el cliente seleccionado?", "Advertencia", JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
+        
+        //Confirmacion puede ser 0=SI, 1=CANCEL
+        if (confirmacion==0){
+                try{
+                conexion.delete(clienteborrar);
+                trx.commit();
+                comboClientes.removeItem(dni);
+                JOptionPane.showMessageDialog(null, "Cliente eliminado satisfactoriamente", "Operación correcta", JOptionPane.INFORMATION_MESSAGE);
+            }catch(Exception e){
+                JOptionPane.showMessageDialog(null, e.getStackTrace(), "Error en la operación", JOptionPane.ERROR_MESSAGE);
+            }
+        }else{
+            JOptionPane.showMessageDialog(null, "Operación cancelada", "Información", JOptionPane.INFORMATION_MESSAGE);
+        }
+           
+        
+        
+        
+    }//GEN-LAST:event_btnEliminarActionPerformed
 
     /**
      * @param args the command line arguments
