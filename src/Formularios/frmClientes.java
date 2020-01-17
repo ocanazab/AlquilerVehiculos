@@ -40,6 +40,7 @@ public class frmClientes extends javax.swing.JDialog {
     //Variable pública para recibir datos del cuadro de dialogo de AddCliente.
     public static String Intercambio="";
     public static Boolean nuevoCliente=false;
+    public static String clienteNuevo="";
     
     /**
      * Creates new form frmClientesModal
@@ -218,14 +219,23 @@ public class frmClientes extends javax.swing.JDialog {
         // Añadiré un nuevo elemento a la lista y lo selecionaré.
         // Habrá que introducir los datos que faltan y pulsar sobre el botón guardar.
         // Incluiré un flag de "nuevo cliente" para hacer un insert en la base de datos en lugar de un update.
+        
+        //Limpio los campos
+        txtNombre.setText("");
+        txtApellidos.setText("");
+        txtDireccion.setText("");
+        txtTelefono.setText("");
+        
         frmAddCliente frmnuevocli = new frmAddCliente(this,true);
         frmnuevocli.setVisible(true);
         
         //Añado el dni del cliente introducido en el formulario anterior.
-        comboClientes.addItem(Intercambio);
-        
-        //Marco el cliente como nuevo.
-        nuevoCliente=true;
+        if (Intercambio.isEmpty()==false){
+            comboClientes.addItem(Intercambio);
+            comboClientes.setSelectedItem(Intercambio);
+            //Marco el cliente como nuevo.
+            nuevoCliente=true;
+        }
     }//GEN-LAST:event_btnNuevoClienteActionPerformed
 
     private void txtApellidosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtApellidosActionPerformed
@@ -298,9 +308,22 @@ public class frmClientes extends javax.swing.JDialog {
 
     private void comboClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboClientesActionPerformed
         // Al hacer click sobre un elemento, recuperar de la base de datos la información del cliente.        
-        comboClientes.addActionListener(new ActionListener(){
-                      @Override public void actionPerformed(ActionEvent e) {cargaDatosCliente();}
-        });    
+        //JOptionPane.showMessageDialog(null, evt.getActionCommand());
+                
+             
+        clienteNuevo=comboClientes.getSelectedItem().toString();
+        
+        if (Intercambio.equals(clienteNuevo)==false){
+            cargaDatosCliente();
+            Intercambio=comboClientes.getSelectedItem().toString();
+        }
+        
+        //comboClientes.addActionListener(new ActionListener(){
+        //              @Override public void actionPerformed(ActionEvent e) {                          
+        //                  JOptionPane.showMessageDialog(null, e.getActionCommand());
+        //                  cargaDatosCliente();                      
+        //              }
+        //});    
         
     }//GEN-LAST:event_comboClientesActionPerformed
 
@@ -333,9 +356,6 @@ public class frmClientes extends javax.swing.JDialog {
         }else{
             JOptionPane.showMessageDialog(null, "Operación cancelada", "Información", JOptionPane.INFORMATION_MESSAGE);
         }
-           
-        
-        
         
     }//GEN-LAST:event_btnEliminarActionPerformed
 
@@ -421,7 +441,8 @@ public class frmClientes extends javax.swing.JDialog {
                 txtNombre.setText(cli.getNombre());
                 txtApellidos.setText(cli.getApellidos());
                 txtDireccion.setText(cli.getDireccion());
-                txtTelefono.setText(cli.getTelefono());            
+                txtTelefono.setText(cli.getTelefono());
+                
             }catch(ObjectNotFoundException e){
                 JOptionPane.showMessageDialog(null, "No existe el cliente", "Registro no encontrado", JOptionPane.ERROR_MESSAGE);            
             }catch(Exception e){
