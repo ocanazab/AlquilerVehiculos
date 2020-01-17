@@ -8,12 +8,30 @@ package Formularios;
 import java.awt.Image;
 import java.awt.Toolkit;
 
+import javax.swing.JOptionPane;
+import gestion.Coches;
+import java.util.Iterator;
+import java.util.List;
+
+//Imports para Hibernate
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.Query;
+import conexiones.HibernateUtil;
+import org.hibernate.ObjectNotFoundException;
+
 /**
  *
  * @author nacho
  */
 public class frmCoches extends javax.swing.JDialog {
 
+    //Variable pública para recibir datos del cuadro de dialogo de AddCliente.
+    public static String Intercambio="";
+    public static Boolean nuevoCoche=false;
+    public static String cocheNuevo="";
+    
     /**
      * Creates new form frmClientesModal
      */
@@ -32,15 +50,15 @@ public class frmCoches extends javax.swing.JDialog {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        comboClientes = new javax.swing.JComboBox<>();
+        comboCoches = new javax.swing.JComboBox<>();
         btnNuevoCoche = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
-        txtNombre = new javax.swing.JTextField();
+        txtPrecio = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        txtApellidos = new javax.swing.JTextField();
+        txtColor = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        txtTelefono = new javax.swing.JTextField();
+        txtMatriculacion = new javax.swing.JTextField();
         btnGuardar = new javax.swing.JButton();
         btnEliminar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
@@ -53,7 +71,7 @@ public class frmCoches extends javax.swing.JDialog {
         jLabel1.setText("Matricula");
         jLabel1.setName("labelMatricula"); // NOI18N
 
-        comboClientes.setName("ComboCoches"); // NOI18N
+        comboCoches.setName("ComboCoches"); // NOI18N
 
         btnNuevoCoche.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/nuevocoche.png"))); // NOI18N
         btnNuevoCoche.setName("btnNuevoCoche"); // NOI18N
@@ -66,15 +84,15 @@ public class frmCoches extends javax.swing.JDialog {
         jLabel2.setText("Precio");
         jLabel2.setName("labelPrecio"); // NOI18N
 
-        txtNombre.setName("txtNombre"); // NOI18N
+        txtPrecio.setName("txtPrecio"); // NOI18N
 
         jLabel3.setText("Color");
         jLabel3.setName("labelColor"); // NOI18N
 
-        txtApellidos.setName("txtApellidos"); // NOI18N
-        txtApellidos.addActionListener(new java.awt.event.ActionListener() {
+        txtColor.setName("txtColor"); // NOI18N
+        txtColor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtApellidosActionPerformed(evt);
+                txtColorActionPerformed(evt);
             }
         });
 
@@ -84,10 +102,15 @@ public class frmCoches extends javax.swing.JDialog {
         jLabel5.setText("Matriculación");
         jLabel5.setName("labelFechaMatri"); // NOI18N
 
-        txtTelefono.setName("txtTelefono"); // NOI18N
+        txtMatriculacion.setName("txtMatriculacion"); // NOI18N
 
         btnGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/guardar.png"))); // NOI18N
         btnGuardar.setName("btnGuardarCoche"); // NOI18N
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarActionPerformed(evt);
+            }
+        });
 
         btnEliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/borrar.png"))); // NOI18N
         btnEliminar.setToolTipText("");
@@ -117,11 +140,11 @@ public class frmCoches extends javax.swing.JDialog {
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(4, 4, 4)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtMatriculacion, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtMarca)
-                    .addComponent(txtApellidos)
-                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(comboClientes, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtColor)
+                    .addComponent(txtPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(comboCoches, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnNuevoCoche)
                 .addContainerGap(18, Short.MAX_VALUE))
@@ -140,16 +163,16 @@ public class frmCoches extends javax.swing.JDialog {
                 .addGap(34, 34, 34)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel1)
-                    .addComponent(comboClientes, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(comboCoches, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnNuevoCoche))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel2)
-                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel3)
-                    .addComponent(txtApellidos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtColor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel4)
@@ -157,7 +180,7 @@ public class frmCoches extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel5)
-                    .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtMatriculacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -173,19 +196,91 @@ public class frmCoches extends javax.swing.JDialog {
     private void btnNuevoCocheActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoCocheActionPerformed
         // Añadiré un nuevo elemento a la lista y lo selecionaré.
         // Habrá que introducir los datos que faltan y pulsar sobre el botón guardar.
-        // Incluiré un flag de "nuevo cliente" para hacer un insert en la base de datos en lugar de un update.
+        // Incluiré un flag de "nuevo coche" para hacer un insert en la base de datos en lugar de un update.
+        
         frmAddCoche nuevocoche = new frmAddCoche(this,true);
         nuevocoche.setVisible(true);
+        
+        //Añado el dni del cliente introducido en el formulario anterior.
+        if (Intercambio.isEmpty()==false){
+            comboCoches.addItem(Intercambio);
+            comboCoches.setSelectedItem(Intercambio);
+            //Marco el cliente como nuevo.
+            nuevoCoche=true;
+            //Limpio los campos
+            txtColor.setText("");
+            txtMarca.setText("");
+            txtPrecio.setText("");
+            txtMatriculacion.setText("");
+        }
     }//GEN-LAST:event_btnNuevoCocheActionPerformed
 
-    private void txtApellidosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtApellidosActionPerformed
+    private void txtColorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtColorActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtApellidosActionPerformed
+    }//GEN-LAST:event_txtColorActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         // Cierro el formulario
         dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        // Inicializo Hibernate
+        SessionFactory sesion=HibernateUtil.getSessionFactory();
+        Session session = sesion.openSession();
+        
+        //Inicializo la transaccion
+        Transaction tx = session.beginTransaction();
+        
+        
+        
+        //El id_coche será su matricula        
+        int idcliente = Integer.parseInt(comboCoches.getSelectedItem().toString());
+        
+        
+        
+        if (nuevoCoche){
+            
+            //El Cliente es nuevo, lo doy de alta en la base de datos.
+            
+            Coches cochenew = new Coches();        
+            
+            cochenew.setIdCoche(idcliente);
+            cochenew.setMatricula(comboCoches.getSelectedItem().toString());
+            cochenew.setColor(txtColor.getText());
+            cochenew.setMarca(txtMarca.getText());
+            cochenew.setPrecio(txtPrecio.getText());
+            cochenew.setFechaMatriculacion(txtMatriculacion.getText());           
+        
+            //Guardo los datos
+            session.save(cochenew);
+        }else{
+            
+            //El cliente ya existe, actualizo los datos.
+            
+            Coches cochesupdate = (Coches) session.get(Coches.class, idCoche);
+            
+            cochesupdate.setIdCoche(comboCoches.getSelectedItem().toString());            
+            cochesupdate.setNombre(txtNombre.getText());
+            cochesupdate.setApellidos(txtApellidos.getText());
+            cochesupdate.setDireccion(txtDireccion.getText());
+            cochesupdate.setTelefono(txtTelefono.getText());
+            
+            session.update(cochesupdate);
+        }
+        
+        //Confirmo los cambios
+        
+        try{
+            tx.commit();            
+            //Cierro la sesion        
+            session.close();
+            JOptionPane.showMessageDialog(null, "Cliente guardado satisfactoriamente", "Operación correcta", JOptionPane.INFORMATION_MESSAGE);
+            nuevoCliente=false;
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, e.getStackTrace(), "Error en la operación", JOptionPane.ERROR_MESSAGE);                
+        }       
+    }//GEN-LAST:event_btnGuardarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -241,15 +336,15 @@ public class frmCoches extends javax.swing.JDialog {
     private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnNuevoCoche;
-    private javax.swing.JComboBox<String> comboClientes;
+    private javax.swing.JComboBox<String> comboCoches;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JTextField txtApellidos;
+    private javax.swing.JTextField txtColor;
     private javax.swing.JTextField txtMarca;
-    private javax.swing.JTextField txtNombre;
-    private javax.swing.JTextField txtTelefono;
+    private javax.swing.JTextField txtMatriculacion;
+    private javax.swing.JTextField txtPrecio;
     // End of variables declaration//GEN-END:variables
 }

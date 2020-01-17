@@ -36,11 +36,11 @@
               </Group>
               <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="txtTelefono" alignment="0" min="-2" pref="157" max="-2" attributes="0"/>
+                  <Component id="txtMatriculacion" alignment="0" min="-2" pref="157" max="-2" attributes="0"/>
                   <Component id="txtMarca" alignment="0" max="32767" attributes="0"/>
-                  <Component id="txtApellidos" alignment="0" max="32767" attributes="0"/>
-                  <Component id="txtNombre" alignment="0" min="-2" pref="114" max="-2" attributes="0"/>
-                  <Component id="comboClientes" alignment="0" min="-2" pref="253" max="-2" attributes="0"/>
+                  <Component id="txtColor" alignment="0" max="32767" attributes="0"/>
+                  <Component id="txtPrecio" alignment="0" min="-2" pref="114" max="-2" attributes="0"/>
+                  <Component id="comboCoches" alignment="0" min="-2" pref="253" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="btnNuevoCoche" min="-2" max="-2" attributes="0"/>
@@ -63,18 +63,18 @@
               <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="2" attributes="0">
                   <Component id="jLabel1" alignment="2" min="-2" max="-2" attributes="0"/>
-                  <Component id="comboClientes" alignment="2" min="-2" pref="34" max="-2" attributes="0"/>
+                  <Component id="comboCoches" alignment="2" min="-2" pref="34" max="-2" attributes="0"/>
                   <Component id="btnNuevoCoche" alignment="2" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="2" attributes="0">
                   <Component id="jLabel2" alignment="2" min="-2" max="-2" attributes="0"/>
-                  <Component id="txtNombre" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Component id="txtPrecio" alignment="2" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="2" attributes="0">
                   <Component id="jLabel3" alignment="2" min="-2" max="-2" attributes="0"/>
-                  <Component id="txtApellidos" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Component id="txtColor" alignment="2" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="2" attributes="0">
@@ -84,7 +84,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="2" attributes="0">
                   <Component id="jLabel5" alignment="2" min="-2" max="-2" attributes="0"/>
-                  <Component id="txtTelefono" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Component id="txtMatriculacion" alignment="2" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace pref="36" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="2" attributes="0">
@@ -104,7 +104,7 @@
         <Property name="name" type="java.lang.String" value="labelMatricula" noResource="true"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JComboBox" name="comboClientes">
+    <Component class="javax.swing.JComboBox" name="comboCoches">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
           <StringArray count="0"/>
@@ -132,9 +132,9 @@
         <Property name="name" type="java.lang.String" value="labelPrecio" noResource="true"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="txtNombre">
+    <Component class="javax.swing.JTextField" name="txtPrecio">
       <Properties>
-        <Property name="name" type="java.lang.String" value="txtNombre" noResource="true"/>
+        <Property name="name" type="java.lang.String" value="txtPrecio" noResource="true"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel3">
@@ -143,12 +143,12 @@
         <Property name="name" type="java.lang.String" value="labelColor" noResource="true"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="txtApellidos">
+    <Component class="javax.swing.JTextField" name="txtColor">
       <Properties>
-        <Property name="name" type="java.lang.String" value="txtApellidos" noResource="true"/>
+        <Property name="name" type="java.lang.String" value="txtColor" noResource="true"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtApellidosActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtColorActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel4">
@@ -163,9 +163,9 @@
         <Property name="name" type="java.lang.String" value="labelFechaMatri" noResource="true"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="txtTelefono">
+    <Component class="javax.swing.JTextField" name="txtMatriculacion">
       <Properties>
-        <Property name="name" type="java.lang.String" value="txtTelefono" noResource="true"/>
+        <Property name="name" type="java.lang.String" value="txtMatriculacion" noResource="true"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="btnGuardar">
@@ -175,6 +175,9 @@
         </Property>
         <Property name="name" type="java.lang.String" value="btnGuardarCoche" noResource="true"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnGuardarActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btnEliminar">
       <Properties>
