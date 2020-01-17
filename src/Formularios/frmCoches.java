@@ -72,6 +72,11 @@ public class frmCoches extends javax.swing.JDialog {
         jLabel1.setName("labelMatricula"); // NOI18N
 
         comboCoches.setName("ComboCoches"); // NOI18N
+        comboCoches.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboCochesActionPerformed(evt);
+            }
+        });
 
         btnNuevoCoche.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/nuevocoche.png"))); // NOI18N
         btnNuevoCoche.setName("btnNuevoCoche"); // NOI18N
@@ -115,6 +120,11 @@ public class frmCoches extends javax.swing.JDialog {
         btnEliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/borrar.png"))); // NOI18N
         btnEliminar.setToolTipText("");
         btnEliminar.setName("btnEliminarCoche"); // NOI18N
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
 
         btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/cancelar.png"))); // NOI18N
         btnCancelar.setName("btnCancelar"); // NOI18N
@@ -235,7 +245,7 @@ public class frmCoches extends javax.swing.JDialog {
         
         
         //El id_coche será su matricula        
-        int idcliente = Integer.parseInt(comboCoches.getSelectedItem().toString());
+        int idcoche = Integer.parseInt(comboCoches.getSelectedItem().toString());
         
         
         
@@ -245,7 +255,7 @@ public class frmCoches extends javax.swing.JDialog {
             
             Coches cochenew = new Coches();        
             
-            cochenew.setIdCoche(idcliente);
+            cochenew.setIdCoche(idcoche);
             cochenew.setMatricula(comboCoches.getSelectedItem().toString());
             cochenew.setColor(txtColor.getText());
             cochenew.setMarca(txtMarca.getText());
@@ -258,13 +268,13 @@ public class frmCoches extends javax.swing.JDialog {
             
             //El cliente ya existe, actualizo los datos.
             
-            Coches cochesupdate = (Coches) session.get(Coches.class, idCoche);
+            Coches cochesupdate = (Coches) session.get(Coches.class, idcoche);
             
             cochesupdate.setIdCoche(comboCoches.getSelectedItem().toString());            
-            cochesupdate.setNombre(txtNombre.getText());
-            cochesupdate.setApellidos(txtApellidos.getText());
-            cochesupdate.setDireccion(txtDireccion.getText());
-            cochesupdate.setTelefono(txtTelefono.getText());
+            cochesupdate.setColor(txtColor.getText());
+            cochesupdate.setMarca(txtMarca.getText());
+            cochesupdate.setFechaMatriculacion(txtMatriculacion.getText());
+            cochesupdate.setPrecio(txtPrecio.getText());
             
             session.update(cochesupdate);
         }
@@ -275,12 +285,56 @@ public class frmCoches extends javax.swing.JDialog {
             tx.commit();            
             //Cierro la sesion        
             session.close();
-            JOptionPane.showMessageDialog(null, "Cliente guardado satisfactoriamente", "Operación correcta", JOptionPane.INFORMATION_MESSAGE);
-            nuevoCliente=false;
+            JOptionPane.showMessageDialog(null, "Coche guardado satisfactoriamente", "Operación correcta", JOptionPane.INFORMATION_MESSAGE);
+            nuevoCoche=false;
         }catch(Exception e){
             JOptionPane.showMessageDialog(null, e.getStackTrace(), "Error en la operación", JOptionPane.ERROR_MESSAGE);                
         }       
     }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void comboCochesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboCochesActionPerformed
+               
+        // Al hacer click sobre un elemento, recuperar de la base de datos la información del coche.        
+                    
+             
+        cocheNuevo=comboCoches.getSelectedItem().toString();
+        
+        if (Intercambio.equals(cocheNuevo)==false){
+            cargaDatosCoche();
+            Intercambio=comboCoches.getSelectedItem().toString();
+        }
+    }//GEN-LAST:event_comboCochesActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        // Borro el registro seleccionado.
+        SessionFactory factoria = HibernateUtil.getSessionFactory();
+        Session conexion = factoria.openSession();
+        
+        Transaction trx = conexion.beginTransaction();
+        
+        //El id_cliente será su dni sin la letra        
+        int idcoche = Integer.parseInt(comboCoches.getSelectedItem().toString());
+        String dni=comboCoches.getSelectedItem().toString();
+        int confirmacion;
+        
+        Coches cocheborrar = (Coches) conexion.load(Coches.class,idcoche);          
+        
+        confirmacion=JOptionPane.showConfirmDialog(null, "¿Quieres borrar el coche seleccionado?", "Advertencia", JOptionPane.OK_CANCEL_OPTION);
+        
+        //Confirmacion puede ser 0=SI, 1=CANCEL
+        if (confirmacion==0){
+                try{
+                conexion.delete(cocheborrar);
+                trx.commit();
+                comboCoches.removeItem(dni);
+                JOptionPane.showMessageDialog(null, "Coche eliminado satisfactoriamente", "Operación correcta", JOptionPane.INFORMATION_MESSAGE);
+            }catch(Exception e){
+                JOptionPane.showMessageDialog(null, e.getStackTrace(), "Error en la operación", JOptionPane.ERROR_MESSAGE);
+            }
+        }else{
+            JOptionPane.showMessageDialog(null, "Operación cancelada", "Información", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_btnEliminarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -329,6 +383,27 @@ public class frmCoches extends javax.swing.JDialog {
     public Image getIconoFormulario(){
      Image retValue = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("recursos/nuevocliente.png"));
      return retValue;
+    }
+    
+    private void cargaDatosCombo(){
+        //Obtengo los clientes de la base de datos y relleno el combo.
+        SessionFactory sesion = HibernateUtil.getSessionFactory();
+        Session conexion = sesion.openSession();
+        
+        Query consulta = conexion.createQuery("from Coches");
+        List<Coches> listacoches = consulta.list();
+        int numCoches=0;
+        
+        Iterator<Coches> iterador = listacoches.iterator();
+        
+        while (iterador.hasNext()){
+            Coches coche = (Coches) iterador.next();
+            comboCoches.addItem(coche.getMatricula());
+        }
+            
+        comboCoches.setSelectedIndex(0);
+        
+        conexion.close();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
