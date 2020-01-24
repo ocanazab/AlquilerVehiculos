@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 import gestion.Coches;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 //Imports para Hibernate
 import org.hibernate.Session;
@@ -19,6 +20,12 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.Query;
 import conexiones.HibernateUtil;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.hibernate.ObjectNotFoundException;
 
 /**
@@ -242,39 +249,63 @@ public class frmCoches extends javax.swing.JDialog {
         //Inicializo la transaccion
         Transaction tx = session.beginTransaction();
         
-        
-        
-        //El id_coche será su matricula        
-        int idcoche = Integer.parseInt(comboCoches.getSelectedItem().toString());
+        //Preparamos la conversión de la fecha
+        DateFormat formato= new SimpleDateFormat("dd/mm/yyyy");
         
         
         
         if (nuevoCoche){
             
-            //El Cliente es nuevo, lo doy de alta en la base de datos.
+            //El coche es nuevo, lo doy de alta en la base de datos.
             
             Coches cochenew = new Coches();        
             
+            //El id_coche será un número generado al azar        
+                
+            Random aleatorio = new Random(99999999);
+            int idcoche= aleatorio.nextInt();
+            
             cochenew.setIdCoche(idcoche);
+            
+            
+            //Para estos campos no hay tanto problema, tratamiento normal.
             cochenew.setMatricula(comboCoches.getSelectedItem().toString());
             cochenew.setColor(txtColor.getText());
             cochenew.setMarca(txtMarca.getText());
-            cochenew.setPrecio(txtPrecio.getText());
-            cochenew.setFechaMatriculacion(txtMatriculacion.getText());           
-        
+            cochenew.setPrecio(Float.parseFloat(txtPrecio.getText()));
+            
+            //Damos formato a la fecha
+            try {
+                Date fecha = formato.parse(txtMatriculacion.getText());
+                cochenew.setFechaMatriculacion(fecha);
+                
+            } catch (ParseException ex) {
+                Logger.getLogger(frmCoches.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
             //Guardo los datos
             session.save(cochenew);
         }else{
             
             //El cliente ya existe, actualizo los datos.
+            String matricula=comboCoches.getSelectedItem().toString();
             
-            Coches cochesupdate = (Coches) session.get(Coches.class, idcoche);
+            Coches cochesupdate = (Coches) session.get(Coches.class, matricula);            
             
-            cochesupdate.setIdCoche(comboCoches.getSelectedItem().toString());            
             cochesupdate.setColor(txtColor.getText());
             cochesupdate.setMarca(txtMarca.getText());
-            cochesupdate.setFechaMatriculacion(txtMatriculacion.getText());
-            cochesupdate.setPrecio(txtPrecio.getText());
+            
+            //Damos formato a la fecha
+            try {
+                Date fecha = formato.parse(txtMatriculacion.getText());
+                cochesupdate.setFechaMatriculacion(fecha);
+                
+            } catch (ParseException ex) {
+                Logger.getLogger(frmCoches.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            
+            cochesupdate.setPrecio(Float.parseFloat(txtPrecio.getText()));
             
             session.update(cochesupdate);
         }
@@ -381,7 +412,7 @@ public class frmCoches extends javax.swing.JDialog {
         });
     }
     public Image getIconoFormulario(){
-     Image retValue = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("recursos/nuevocliente.png"));
+     Image retValue = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("recursos/nuevocoche.png"));
      return retValue;
     }
     
@@ -405,7 +436,47 @@ public class frmCoches extends javax.swing.JDialog {
         
         conexion.close();
     }
+    private void cargaDatosCoche(){
+        
+        //Preparamos la conversión de la fecha
+        DateFormat formato= new SimpleDateFormat("dd/mm/yyyy");
+        
+        if(nuevoCoche==false){
+            SessionFactory sesion=HibernateUtil.getSessionFactory();
+            Session conexion= sesion.openSession();
+        
+            Coches coche= new Coches();
+            
+        
+            String matricula="";
+            matricula=comboCoches.getSelectedItem().toString();
+        
+            try{
+                coche=(Coches) conexion.load(Coches.class,matricula);
+            
+                txtColor.setText(coche.getMatricula());
+                txtMarca.setText(coche.getMarca());
+                
+                //Formateamos la fecha de matriculacion                
+                
+                try {
+                    Date fecha = formato.parse(coche.getFechaMatriculacion().toString());
+                    coche.setFechaMatriculacion(fecha);
 
+                } catch (ParseException ex) {
+                    Logger.getLogger(frmCoches.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                txtPrecio.setText(coche.getPrecio().toString());                
+                
+            }catch(ObjectNotFoundException e){
+                JOptionPane.showMessageDialog(null, "No existe el coche", "Registro no encontrado", JOptionPane.ERROR_MESSAGE);            
+            }catch(Exception e){
+                JOptionPane.showMessageDialog(null, e.getMessage(), "Error en la operación", JOptionPane.ERROR_MESSAGE);            
+            }
+            conexion.close();
+        }
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnEliminar;
