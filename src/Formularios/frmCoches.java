@@ -20,6 +20,9 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.Query;
 import conexiones.HibernateUtil;
+import gestion.Validaciones;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -45,6 +48,8 @@ public class frmCoches extends javax.swing.JDialog {
     public frmCoches(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        //Hago una carga inicial de los coches almacenados en la base de datos.
+        cargaDatosCombo();
     }
 
     /**
@@ -78,7 +83,7 @@ public class frmCoches extends javax.swing.JDialog {
         jLabel1.setText("Matricula");
         jLabel1.setName("labelMatricula"); // NOI18N
 
-        comboCoches.setName("ComboCoches"); // NOI18N
+        comboCoches.setName(""); // NOI18N
         comboCoches.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboCochesActionPerformed(evt);
@@ -218,11 +223,11 @@ public class frmCoches extends javax.swing.JDialog {
         frmAddCoche nuevocoche = new frmAddCoche(this,true);
         nuevocoche.setVisible(true);
         
-        //Añado el dni del cliente introducido en el formulario anterior.
+        //Añado la matricula del coche introducido en el formulario anterior.
         if (Intercambio.isEmpty()==false){
             comboCoches.addItem(Intercambio);
             comboCoches.setSelectedItem(Intercambio);
-            //Marco el cliente como nuevo.
+            //Marco el coche como nuevo.
             nuevoCoche=true;
             //Limpio los campos
             txtColor.setText("");
@@ -258,7 +263,8 @@ public class frmCoches extends javax.swing.JDialog {
             
             //El coche es nuevo, lo doy de alta en la base de datos.
             
-            Coches cochenew = new Coches();        
+            Coches cochenew = new Coches();
+            Validaciones valida = new Validaciones();
             
             //El id_coche será un número generado al azar        
                 
@@ -272,8 +278,15 @@ public class frmCoches extends javax.swing.JDialog {
             cochenew.setMatricula(comboCoches.getSelectedItem().toString());
             cochenew.setColor(txtColor.getText());
             cochenew.setMarca(txtMarca.getText());
-            cochenew.setPrecio(Float.parseFloat(txtPrecio.getText()));
             
+            
+            //Comprobamos si es numérico
+            if (valida.esNumero(txtPrecio.getText())){
+                cochenew.setPrecio(Float.parseFloat(txtPrecio.getText()));
+            }else{
+                JOptionPane.showMessageDialog(null, "El valor debe de ser numérico", "Error en los datos", JOptionPane.ERROR_MESSAGE);
+            }
+                                
             //Damos formato a la fecha
             try {
                 Date fecha = formato.parse(txtMatriculacion.getText());
@@ -281,7 +294,7 @@ public class frmCoches extends javax.swing.JDialog {
                 
             } catch (ParseException ex) {
                 Logger.getLogger(frmCoches.class.getName()).log(Level.SEVERE, null, ex);
-            }
+           }
             
             //Guardo los datos
             session.save(cochenew);
@@ -323,19 +336,6 @@ public class frmCoches extends javax.swing.JDialog {
         }       
     }//GEN-LAST:event_btnGuardarActionPerformed
 
-    private void comboCochesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboCochesActionPerformed
-               
-        // Al hacer click sobre un elemento, recuperar de la base de datos la información del coche.        
-                    
-             
-        cocheNuevo=comboCoches.getSelectedItem().toString();
-        
-        if (Intercambio.equals(cocheNuevo)==false){
-            cargaDatosCoche();
-            Intercambio=comboCoches.getSelectedItem().toString();
-        }
-    }//GEN-LAST:event_comboCochesActionPerformed
-
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
         // Borro el registro seleccionado.
         SessionFactory factoria = HibernateUtil.getSessionFactory();
@@ -343,9 +343,9 @@ public class frmCoches extends javax.swing.JDialog {
         
         Transaction trx = conexion.beginTransaction();
         
-        //El id_cliente será su dni sin la letra        
-        int idcoche = Integer.parseInt(comboCoches.getSelectedItem().toString());
-        String dni=comboCoches.getSelectedItem().toString();
+        //El idcoche será su matricula.
+        String idcoche=comboCoches.getSelectedItem().toString();        
+        
         int confirmacion;
         
         Coches cocheborrar = (Coches) conexion.load(Coches.class,idcoche);          
@@ -357,7 +357,7 @@ public class frmCoches extends javax.swing.JDialog {
                 try{
                 conexion.delete(cocheborrar);
                 trx.commit();
-                comboCoches.removeItem(dni);
+                comboCoches.removeItem(idcoche);
                 JOptionPane.showMessageDialog(null, "Coche eliminado satisfactoriamente", "Operación correcta", JOptionPane.INFORMATION_MESSAGE);
             }catch(Exception e){
                 JOptionPane.showMessageDialog(null, e.getStackTrace(), "Error en la operación", JOptionPane.ERROR_MESSAGE);
@@ -366,6 +366,16 @@ public class frmCoches extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(null, "Operación cancelada", "Información", JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void comboCochesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboCochesActionPerformed
+                
+        cocheNuevo=comboCoches.getSelectedItem().toString();
+        
+        if (Intercambio.equals(cocheNuevo)==false){
+            cargaDatosCoche();
+            Intercambio=comboCoches.getSelectedItem().toString();
+        }        
+    }//GEN-LAST:event_comboCochesActionPerformed
 
     /**
      * @param args the command line arguments
@@ -406,10 +416,11 @@ public class frmCoches extends javax.swing.JDialog {
                     public void windowClosing(java.awt.event.WindowEvent e) {
                         System.exit(0);
                     }
-                });
+                });                                
                 dialog.setVisible(true);
             }
         });
+        
     }
     public Image getIconoFormulario(){
      Image retValue = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("recursos/nuevocoche.png"));
@@ -417,7 +428,7 @@ public class frmCoches extends javax.swing.JDialog {
     }
     
     private void cargaDatosCombo(){
-        //Obtengo los clientes de la base de datos y relleno el combo.
+        //Obtengo los coches de la base de datos y relleno el combo.
         SessionFactory sesion = HibernateUtil.getSessionFactory();
         Session conexion = sesion.openSession();
         
@@ -439,7 +450,7 @@ public class frmCoches extends javax.swing.JDialog {
     private void cargaDatosCoche(){
         
         //Preparamos la conversión de la fecha
-        DateFormat formato= new SimpleDateFormat("dd/mm/yyyy");
+        DateFormat formato= new SimpleDateFormat("dd/mm/yyyy");        
         
         if(nuevoCoche==false){
             SessionFactory sesion=HibernateUtil.getSessionFactory();
@@ -454,18 +465,19 @@ public class frmCoches extends javax.swing.JDialog {
             try{
                 coche=(Coches) conexion.load(Coches.class,matricula);
             
-                txtColor.setText(coche.getMatricula());
-                txtMarca.setText(coche.getMarca());
+                txtColor.setText(coche.getColor());
+                txtMarca.setText(coche.getMarca());                
                 
                 //Formateamos la fecha de matriculacion                
+                txtMatriculacion.setText(formato.format(coche.getFechaMatriculacion()));                    
                 
-                try {
-                    Date fecha = formato.parse(coche.getFechaMatriculacion().toString());
-                    coche.setFechaMatriculacion(fecha);
+                //try {
+                    //Date fecha = formato.parse(coche.getFechaMatriculacion().toString());                    
+                //    txtMatriculacion.setText(formato.format(coche.getFechaMatriculacion()));                    
 
-                } catch (ParseException ex) {
-                    Logger.getLogger(frmCoches.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                //} catch (ParseException ex) {                    
+                //    JOptionPane.showMessageDialog(null, "Error al obtener la fecha.", "Error en los datos.", JOptionPane.ERROR_MESSAGE);            
+                //}
 
                 txtPrecio.setText(coche.getPrecio().toString());                
                 
